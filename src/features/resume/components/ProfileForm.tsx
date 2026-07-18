@@ -8,7 +8,7 @@ export function ProfileForm() {
   const setProfile = useResumeStore((s) => s.setProfile);
 
   return (
-    <SectionCard title="Personal Details">
+    <SectionCard title="Personal Details" collapsible>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <TextField
           label="Full Name"

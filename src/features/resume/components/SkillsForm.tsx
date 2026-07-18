@@ -23,7 +23,7 @@ export function SkillsForm() {
   };
 
   return (
-    <SectionCard title="Skills">
+    <SectionCard title="Skills" collapsible>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {skillCategorySchema.options.map((category) => {
           const group = skills.find((g) => g.category === category);

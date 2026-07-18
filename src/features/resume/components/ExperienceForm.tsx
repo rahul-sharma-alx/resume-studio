@@ -4,6 +4,7 @@ import { TextField, TextAreaField, SectionCard } from "@/shared/form-fields";
 import { useResumeStore } from "@/features/resume/store";
 import type { Experience } from "@/features/resume/validators/resume";
 import { StringListEditor } from "./StringListEditor";
+import { AiImproveButton } from "@/features/ai/AiImproveButton";
 
 export function ExperienceForm() {
   const experience = useResumeStore((s) => s.resume.experience);
@@ -14,6 +15,7 @@ export function ExperienceForm() {
   return (
     <SectionCard
       title="Experience"
+      collapsible
       onAdd={() =>
         addExperience({
           company: "",
@@ -88,10 +90,12 @@ function ExperienceItem({
         I currently work here
       </label>
       <TextAreaField label="Description" value={item.description ?? ""} onChange={(e) => onChange({ description: e.target.value })} />
+      <AiImproveButton text={item.description ?? ""} onImproved={(text) => onChange({ description: text })} />
       <StringListEditor
         label="Achievements"
         items={item.achievements}
         placeholder="Reduced API latency by 35%"
+        aiLabel="Improve"
         onChange={(achievements) => onChange({ achievements })}
       />
       <StringListEditor

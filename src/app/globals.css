@@ -128,12 +128,79 @@ body {
   margin: 1pt 0;
 }
 
-/* Classic template: subtle spacing difference. Same single-column, ATS-safe. */
-.resume-document[data-template="classic"] h1 {
-  text-align: center;
+/* Keyword highlight (screen only). Neutralized for print/PDF below. */
+.resume-document .resume-highlight {
+  background-color: #fde68a;
+  color: inherit;
+  border-radius: 1pt;
+  padding: 0 1pt;
 }
-.resume-document[data-template="classic"] .resume-contact {
+
+/* Professional: blue section headings with a thin rule, sans-serif body. */
+.resume-document[data-template="professional"] {
+  font-family: Arial, Helvetica, sans-serif;
+}
+.resume-document[data-template="professional"] .resume-header {
+  border-bottom: 2pt solid #1f2937;
+}
+.resume-document[data-template="professional"] .resume-section h2 {
+  color: #1f2937;
+  border-bottom: 1pt solid #1f2937;
+}
+
+/* Modern: clean sans-serif with a blue accent rule under the header. */
+.resume-document[data-template="modern"] {
+  font-family: Arial, Helvetica, sans-serif;
+}
+.resume-document[data-template="modern"] .resume-header {
+  border-bottom: 2pt solid #2563eb;
+}
+.resume-document[data-template="modern"] .resume-section h2 {
+  color: #2563eb;
+  border-bottom: none;
+}
+
+/* Executive: serif, centered name, generous spacing. Same ATS-safe layout. */
+.resume-document[data-template="executive"] {
+  font-family: Georgia, "Times New Roman", serif;
+}
+.resume-document[data-template="executive"] h1 {
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+.resume-document[data-template="executive"] .resume-contact {
   justify-content: center;
+}
+.resume-document[data-template="executive"] .resume-section h2 {
+  text-align: center;
+  border-bottom: none;
+}
+
+/* Developer: monospace for tech lines, sans body, green accent. */
+.resume-document[data-template="developer"] {
+  font-family: Arial, Helvetica, sans-serif;
+}
+.resume-document[data-template="developer"] .resume-header {
+  border-bottom: 2pt solid #059669;
+}
+.resume-document[data-template="developer"] .resume-tech {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  color: #059669;
+}
+.resume-document[data-template="developer"] .resume-section h2 {
+  color: #059669;
+  border-bottom: none;
+}
+
+/* Academic: serif, compact, two-space section headings for CV-style use. */
+.resume-document[data-template="academic"] {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 10.5pt;
+}
+.resume-document[data-template="academic"] .resume-section h2 {
+  text-transform: none;
+  letter-spacing: 0;
+  font-style: italic;
 }
 
 /* ---------------------------------------------------------------------------
@@ -152,6 +219,10 @@ body {
     left: 0;
     top: 0;
     width: 100%;
+  }
+  .resume-document .resume-highlight {
+    background-color: transparent;
+    padding: 0;
   }
   @page {
     size: A4;

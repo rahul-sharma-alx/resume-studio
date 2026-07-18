@@ -13,7 +13,7 @@ const ACTION_VERBS = new Set([
   "streamlined", "established", "managed", "mentored", "negotiated", "generated",
 ]);
 
-function tokenize(text: string): string[] {
+export function tokenize(text: string): string[] {
   return text
     .toLowerCase()
     .replace(/[^a-z0-9+\#.]/g, " ")
@@ -190,4 +190,11 @@ export function analyzeResume(resume: Resume, options: AnalyzeOptions = {}): ATS
   );
 
   return { overall: Math.min(100, overall), categories };
+}
+
+// ponytail: keywords worth highlighting = JD tokens longer than 2 chars,
+// de-duplicated. Used by the preview to emphasize matched terms.
+export function extractKeywords(jobDescription: string): string[] {
+  const tokens = tokenize(jobDescription).filter((t) => t.length > 2);
+  return [...new Set(tokens)];
 }

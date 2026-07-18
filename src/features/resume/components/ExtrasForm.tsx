@@ -11,7 +11,7 @@ export function ExtrasForm() {
   const setSectionList = useResumeStore((s) => s.setSectionList);
 
   return (
-    <SectionCard title="Certifications, Achievements & Languages">
+    <SectionCard title="Certifications, Achievements & Languages" collapsible>
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
         <StringListEditor
           label="Certificates"

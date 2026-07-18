@@ -28,16 +28,18 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-zinc-50 dark:bg-zinc-950">
-        <header className="border-b border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
-          <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-3">
-            <span className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
-              Resume Studio AI
-            </span>
-            <ThemeToggle />
-          </div>
-        </header>
-        <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6">{children}</main>
+      <body>
+        <div className="min-h-full flex flex-col bg-zinc-50 dark:bg-zinc-950">
+          <header className="border-b border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
+            <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-3">
+              <span className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
+                Resume Studio AI
+              </span>
+              <ThemeToggle />
+            </div>
+          </header>
+          <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6">{children}</main>
+        </div>
       </body>
     </html>
   );

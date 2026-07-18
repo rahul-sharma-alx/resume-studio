@@ -38,6 +38,11 @@ interface ResumeState {
   resume: Resume;
   variants: Record<string, Variant>;
   activeVariantId: string;
+  jobDescription: string;
+  past: Resume[];
+  future: Resume[];
+  lastSavedAt: number;
+  setJobDescription: (text: string) => void;
   setProfile: (profile: Profile) => void;
   addExperience: (experience: Omit<Experience, "id">) => void;
   updateExperience: (id: string, experience: Partial<Experience>) => void;
@@ -62,108 +67,96 @@ interface ResumeState {
   setTemplate: (template: TemplateId) => void;
   toggleSection: (section: SectionId) => void;
   importResume: (data: unknown) => boolean;
+  undo: () => void;
+  redo: () => void;
   reset: () => void;
 }
+
+// ponytail: history cap prevents unbounded memory growth.
+const HISTORY_LIMIT = 50;
 
 export const useResumeStore = create<ResumeState>()(
   persist(
     (set) => {
       const initialVariant = defaultVariant("Default");
+      // Records the current resume onto the undo stack, then applies `next`.
+      const commit = (next: (resume: Resume) => Resume) =>
+        set((state) => {
+          const past = [...state.past, state.resume].slice(-HISTORY_LIMIT);
+          return { resume: next(state.resume), past, future: [], lastSavedAt: Date.now() };
+        });
       return {
       resume: emptyResume(),
       variants: { [initialVariant.id]: initialVariant },
       activeVariantId: initialVariant.id,
+      jobDescription: "",
+      past: [],
+      lastSavedAt: Date.now(),
+      future: [],
+      setJobDescription: (text) => set({ jobDescription: text }),
       setProfile: (profile) => {
         const parsed = tryParse(profileSchema, profile);
         if (!parsed) return;
-        set((state) => ({ resume: { ...state.resume, profile: parsed } }));
+        commit((resume) => ({ ...resume, profile: parsed }));
       },
       addExperience: (experience) => {
         const parsed = tryParse(experienceSchema, { ...experience, id: createId() });
         if (!parsed) return;
-        set((state) => ({
-          resume: {
-            ...state.resume,
-            experience: [...state.resume.experience, parsed],
-          },
-        }));
+        commit((resume) => ({ ...resume, experience: [...resume.experience, parsed] }));
       },
       updateExperience: (id, experience) =>
-        set((state) => ({
-          resume: {
-            ...state.resume,
-            experience: state.resume.experience.map((item) =>
-              item.id === id ? { ...item, ...experience } : item,
-            ),
-          },
+        commit((resume) => ({
+          ...resume,
+          experience: resume.experience.map((item) =>
+            item.id === id ? { ...item, ...experience } : item,
+          ),
         })),
       removeExperience: (id) =>
-        set((state) => ({
-          resume: {
-            ...state.resume,
-            experience: state.resume.experience.filter((item) => item.id !== id),
-          },
+        commit((resume) => ({
+          ...resume,
+          experience: resume.experience.filter((item) => item.id !== id),
         })),
       addProject: (project) => {
         const parsed = tryParse(projectSchema, { ...project, id: createId() });
         if (!parsed) return;
-        set((state) => ({
-          resume: {
-            ...state.resume,
-            projects: [...state.resume.projects, parsed],
-          },
-        }));
+        commit((resume) => ({ ...resume, projects: [...resume.projects, parsed] }));
       },
       updateProject: (id, project) =>
-        set((state) => ({
-          resume: {
-            ...state.resume,
-            projects: state.resume.projects.map((item) =>
-              item.id === id ? { ...item, ...project } : item,
-            ),
-          },
+        commit((resume) => ({
+          ...resume,
+          projects: resume.projects.map((item) =>
+            item.id === id ? { ...item, ...project } : item,
+          ),
         })),
       removeProject: (id) =>
-        set((state) => ({
-          resume: {
-            ...state.resume,
-            projects: state.resume.projects.filter((item) => item.id !== id),
-          },
+        commit((resume) => ({
+          ...resume,
+          projects: resume.projects.filter((item) => item.id !== id),
         })),
       setSkills: (skills) => {
         const parsed = skills.map((g) => tryParse(skillGroupSchema, g)).filter(Boolean) as SkillGroup[];
-        set((state) => ({ resume: { ...state.resume, skills: parsed } }));
+        commit((resume) => ({ ...resume, skills: parsed }));
       },
       addEducation: (education) => {
         const parsed = tryParse(educationSchema, { ...education, id: createId() });
         if (!parsed) return;
-        set((state) => ({
-          resume: {
-            ...state.resume,
-            education: [...state.resume.education, parsed],
-          },
-        }));
+        commit((resume) => ({ ...resume, education: [...resume.education, parsed] }));
       },
       updateEducation: (id, education) =>
-        set((state) => ({
-          resume: {
-            ...state.resume,
-            education: state.resume.education.map((item) =>
-              item.id === id ? { ...item, ...education } : item,
-            ),
-          },
+        commit((resume) => ({
+          ...resume,
+          education: resume.education.map((item) =>
+            item.id === id ? { ...item, ...education } : item,
+          ),
         })),
       removeEducation: (id) =>
-        set((state) => ({
-          resume: {
-            ...state.resume,
-            education: state.resume.education.filter((item) => item.id !== id),
-          },
+        commit((resume) => ({
+          ...resume,
+          education: resume.education.filter((item) => item.id !== id),
         })),
-      setSummary: (summary) =>
-        set((state) => ({ resume: { ...state.resume, summary } })),
+      setSummary: (summary) => commit((resume) => ({ ...resume, summary })),
       setSectionList: (section, value) =>
-        set((state) => ({ resume: { ...state.resume, [section]: value } })),
+        commit((resume) => ({ ...resume, [section]: value })),
       setTemplate: (template) =>
         set((state) => ({
           variants: {
@@ -215,9 +208,29 @@ export const useResumeStore = create<ResumeState>()(
       importResume: (data) => {
         const parsed = tryParse(resumeSchema, data);
         if (!parsed) return false;
-        set({ resume: parsed });
+        commit(() => parsed);
         return true;
       },
+      undo: () =>
+        set((state) => {
+          if (state.past.length === 0) return state;
+          const previous = state.past[state.past.length - 1];
+          return {
+            resume: previous,
+            past: state.past.slice(0, -1),
+            future: [state.resume, ...state.future].slice(0, HISTORY_LIMIT),
+          };
+        }),
+      redo: () =>
+        set((state) => {
+          if (state.future.length === 0) return state;
+          const nextResume = state.future[0];
+          return {
+            resume: nextResume,
+            past: [...state.past, state.resume].slice(-HISTORY_LIMIT),
+            future: state.future.slice(1),
+          };
+        }),
       reset: () => {
         const variant = defaultVariant("Default");
         set({ resume: emptyResume(), variants: { [variant.id]: variant }, activeVariantId: variant.id });
@@ -231,6 +244,8 @@ export const useResumeStore = create<ResumeState>()(
         resume: state.resume,
         variants: state.variants,
         activeVariantId: state.activeVariantId,
+        jobDescription: state.jobDescription,
+        lastSavedAt: state.lastSavedAt,
       }),
       // Never trust browser storage: re-validate the full resume on load.
       onRehydrateStorage: () => (state) => {

@@ -12,6 +12,7 @@ export function EducationForm() {
   return (
     <SectionCard
       title="Education"
+      collapsible
       onAdd={() => addEducation({ institution: "", degree: "", field: "", startDate: "", endDate: "", score: "", location: "" })}
       addLabel="Add Education"
     >

@@ -3,6 +3,7 @@
 import { TextField, TextAreaField, SectionCard } from "@/shared/form-fields";
 import { useResumeStore } from "@/features/resume/store";
 import { StringListEditor } from "./StringListEditor";
+import { AiImproveButton } from "@/features/ai/AiImproveButton";
 
 export function ProjectsForm() {
   const projects = useResumeStore((s) => s.resume.projects);
@@ -13,6 +14,7 @@ export function ProjectsForm() {
   return (
     <SectionCard
       title="Projects"
+      collapsible
       onAdd={() =>
         addProject({
           name: "",
@@ -46,6 +48,7 @@ export function ProjectsForm() {
                 <TextField label="Live Demo" value={item.liveDemo ?? ""} onChange={(e) => updateProject(item.id, { liveDemo: e.target.value })} />
               </div>
               <TextAreaField label="Description" value={item.description} onChange={(e) => updateProject(item.id, { description: e.target.value })} />
+              <AiImproveButton text={item.description} onImproved={(text) => updateProject(item.id, { description: text })} />
               <StringListEditor
                 label="Technologies"
                 items={item.technologies}
@@ -56,6 +59,7 @@ export function ProjectsForm() {
                 label="Achievements"
                 items={item.achievements}
                 placeholder="Served 10k users"
+                aiLabel="Improve"
                 onChange={(achievements) => updateProject(item.id, { achievements })}
               />
             </div>

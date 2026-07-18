@@ -1,4 +1,6 @@
-import { type InputHTMLAttributes, forwardRef } from "react";
+"use client";
+
+import { type InputHTMLAttributes, forwardRef, useState } from "react";
 import { clsx } from "clsx";
 
 interface TextFieldProps extends InputHTMLAttributes<HTMLInputElement> {
@@ -78,16 +80,35 @@ export function SectionCard({
   children,
   onAdd,
   addLabel,
+  collapsible = false,
+  defaultCollapsed = false,
 }: {
   title: string;
   children: React.ReactNode;
   onAdd?: () => void;
   addLabel?: string;
+  collapsible?: boolean;
+  defaultCollapsed?: boolean;
 }) {
+  const [collapsed, setCollapsed] = useState(defaultCollapsed);
   return (
     <section className="flex flex-col gap-4 rounded-lg border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900/50">
       <header className="flex items-center justify-between">
-        <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">{title}</h2>
+        {collapsible ? (
+          <button
+            type="button"
+            onClick={() => setCollapsed((c) => !c)}
+            aria-expanded={!collapsed}
+            className="flex items-center gap-2 text-base font-semibold text-zinc-900 dark:text-zinc-100"
+          >
+            <span aria-hidden className="text-zinc-400">
+              {collapsed ? "▸" : "▾"}
+            </span>
+            {title}
+          </button>
+        ) : (
+          <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">{title}</h2>
+        )}
         {onAdd ? (
           <button
             type="button"
@@ -98,7 +119,7 @@ export function SectionCard({
           </button>
         ) : null}
       </header>
-      {children}
+      {!(collapsible && collapsed) && children}
     </section>
   );
 }

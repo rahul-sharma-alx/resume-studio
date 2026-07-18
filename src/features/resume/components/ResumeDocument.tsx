@@ -1,8 +1,29 @@
 import type { Resume } from "@/features/resume/validators/resume";
-import type { SectionId } from "@/features/resume/constants";
+import type { SectionId, TemplateId } from "@/features/resume/constants";
 
 function nonEmpty(value: string | undefined | null): value is string {
   return typeof value === "string" && value.trim().length > 0;
+}
+
+// Highlights keyword terms inside plain text without altering structure.
+function Highlighted({ text, terms }: { text: string; terms: Set<string> }) {
+  if (terms.size === 0) return <>{text}</>;
+  const escaped = [...terms].sort((a, b) => b.length - a.length).map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+  const regex = new RegExp(`(${escaped.join("|")})`, "gi");
+  const parts = text.split(regex);
+  return (
+    <>
+      {parts.map((part, i) =>
+        terms.has(part.toLowerCase()) ? (
+          <mark key={i} className="resume-highlight">
+            {part}
+          </mark>
+        ) : (
+          <span key={i}>{part}</span>
+        ),
+      )}
+    </>
+  );
 }
 
 function formatRange(start?: string, end?: string, current?: boolean): string {
@@ -15,15 +36,18 @@ export function ResumeDocument({
   resume,
   template,
   visibleSections,
+  highlightTerms,
 }: {
   resume: Resume;
-  template: "minimal" | "classic";
+  template: TemplateId;
   visibleSections?: SectionId[];
+  highlightTerms?: string[];
 }) {
   const { profile, experience, projects, skills, education, certificates, achievements, languages } = resume;
   const hasContact = [profile.email, profile.phone, profile.location, profile.website, profile.linkedin, profile.github].some(nonEmpty);
   const summaryText = resume.summary?.trim() || profile.summary?.trim() || "";
   const show = (section: SectionId) => !visibleSections || visibleSections.includes(section);
+  const terms = new Set((highlightTerms ?? []).map((t) => t.toLowerCase()).filter(Boolean));
 
   return (
     <article className="resume-document" data-template={template}>
@@ -45,7 +69,7 @@ export function ResumeDocument({
       {show("summary") && nonEmpty(summaryText) ? (
         <section className="resume-section">
           <h2>Summary</h2>
-          <p>{summaryText}</p>
+          <p><Highlighted text={summaryText} terms={terms} /></p>
         </section>
       ) : null}
 
@@ -58,16 +82,16 @@ export function ResumeDocument({
                 <span className="resume-entry-title">{item.position}{nonEmpty(item.company) ? `, ${item.company}` : ""}</span>
                 <span className="resume-entry-date">{formatRange(item.startDate, item.endDate, item.current)}</span>
               </div>
-              {nonEmpty(item.description) ? <p className="resume-entry-desc">{item.description}</p> : null}
+              {nonEmpty(item.description) ? <p className="resume-entry-desc"><Highlighted text={item.description} terms={terms} /></p> : null}
               {item.achievements.filter(nonEmpty).length > 0 ? (
                 <ul className="resume-bullets">
                   {item.achievements.filter(nonEmpty).map((a, i) => (
-                    <li key={i}>{a}</li>
+                    <li key={i}><Highlighted text={a} terms={terms} /></li>
                   ))}
                 </ul>
               ) : null}
               {item.technologies.filter(nonEmpty).length > 0 ? (
-                <p className="resume-tech">{item.technologies.filter(nonEmpty).join(", ")}</p>
+                <p className="resume-tech"><Highlighted text={item.technologies.filter(nonEmpty).join(", ")} terms={terms} /></p>
               ) : null}
             </div>
           ))}
@@ -83,16 +107,16 @@ export function ResumeDocument({
                 <span className="resume-entry-title">{item.name}</span>
                 <span className="resume-entry-date">{[item.github, item.liveDemo].filter(nonEmpty).join(" · ")}</span>
               </div>
-              {nonEmpty(item.description) ? <p className="resume-entry-desc">{item.description}</p> : null}
+              {nonEmpty(item.description) ? <p className="resume-entry-desc"><Highlighted text={item.description} terms={terms} /></p> : null}
               {item.achievements.filter(nonEmpty).length > 0 ? (
                 <ul className="resume-bullets">
                   {item.achievements.filter(nonEmpty).map((a, i) => (
-                    <li key={i}>{a}</li>
+                    <li key={i}><Highlighted text={a} terms={terms} /></li>
                   ))}
                 </ul>
               ) : null}
               {item.technologies.filter(nonEmpty).length > 0 ? (
-                <p className="resume-tech">{item.technologies.filter(nonEmpty).join(", ")}</p>
+                <p className="resume-tech"><Highlighted text={item.technologies.filter(nonEmpty).join(", ")} terms={terms} /></p>
               ) : null}
             </div>
           ))}
@@ -108,7 +132,7 @@ export function ResumeDocument({
               if (list.length === 0) return null;
               return (
                 <li key={group.category}>
-                  <strong>{group.category}:</strong> {list.join(", ")}
+                  <strong>{group.category}:</strong> <Highlighted text={list.join(", ")} terms={terms} />
                 </li>
               );
             })}
@@ -135,7 +159,7 @@ export function ResumeDocument({
           <h2>Certifications</h2>
           <ul className="resume-bullets">
             {certificates.filter(nonEmpty).map((c, i) => (
-              <li key={i}>{c}</li>
+              <li key={i}><Highlighted text={c} terms={terms} /></li>
             ))}
           </ul>
         </section>
@@ -146,7 +170,7 @@ export function ResumeDocument({
           <h2>Achievements</h2>
           <ul className="resume-bullets">
             {achievements.filter(nonEmpty).map((a, i) => (
-              <li key={i}>{a}</li>
+              <li key={i}><Highlighted text={a} terms={terms} /></li>
             ))}
           </ul>
         </section>

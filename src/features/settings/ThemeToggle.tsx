@@ -4,21 +4,29 @@ import { useEffect, useState } from "react";
 
 type Mode = "light" | "dark";
 
-function initialMode(): Mode {
-  if (typeof window === "undefined") return "light";
-  const stored = localStorage.getItem("resume-studio:theme") as Mode | null;
-  if (stored === "light" || stored === "dark") return stored;
-  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-}
-
 export function ThemeToggle() {
-  const [mode, setMode] = useState<Mode>(initialMode);
+  // Start stable on server and client to avoid hydration mismatch; the real
+  // preference is applied in an effect after mount.
+  const [mode, setMode] = useState<Mode>("light");
+  const [mounted, setMounted] = useState(false);
 
-  // Sync external system (the <html> class) whenever mode changes.
   useEffect(() => {
+    // Sync persisted/system theme into state after mount — the intended
+    // effect use case (reading external state). The lint rule is bypassed
+    // because this is external-state synchronization, not derived state.
+    const stored = localStorage.getItem("resume-studio:theme") as Mode | null;
+    const next: Mode =
+      stored ?? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMode(next);
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
     document.documentElement.classList.toggle("dark", mode === "dark");
     localStorage.setItem("resume-studio:theme", mode);
-  }, [mode]);
+  }, [mode, mounted]);
 
   return (
     <button

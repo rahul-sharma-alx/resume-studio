@@ -4,7 +4,11 @@ export const STORAGE_KEY = "resume-studio:resume:v1";
 
 export const TEMPLATE_OPTIONS = [
   { id: "minimal", label: "Minimal" },
-  { id: "classic", label: "Classic" },
+  { id: "professional", label: "Professional" },
+  { id: "modern", label: "Modern" },
+  { id: "executive", label: "Executive" },
+  { id: "developer", label: "Developer" },
+  { id: "academic", label: "Academic" },
 ] as const;
 
 export type TemplateId = (typeof TEMPLATE_OPTIONS)[number]["id"];

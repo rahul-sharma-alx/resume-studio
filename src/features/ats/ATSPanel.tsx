@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useResumeStore } from "@/features/resume/store";
 import { analyzeResume } from "./analyze";
 import { TextAreaField } from "@/shared/form-fields";
@@ -35,7 +35,8 @@ function ScoreRing({ score }: { score: number }) {
 
 export function ATSPanel() {
   const resume = useResumeStore((s) => s.resume);
-  const [jobDescription, setJobDescription] = useState("");
+  const jobDescription = useResumeStore((s) => s.jobDescription);
+  const setJobDescription = useResumeStore((s) => s.setJobDescription);
 
   const report = useMemo(
     () => analyzeResume(resume, { jobDescription }),
