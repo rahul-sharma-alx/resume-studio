@@ -40,8 +40,8 @@ export function ResumeEditor() {
   useKeyboardShortcuts();
 
   return (
-    <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-      <div className="no-print flex flex-col gap-4">
+    <div className="grid lg:grid-cols-2 gap-6 lg:h-[calc(100vh-3rem)] lg:min-h-0">
+      <div className="no-print min-h-0 overflow-y-auto scrollbar-hide">
         <Collapsible title="Resume">
           <div className="flex flex-col gap-6">
             <ProfileForm />
@@ -57,8 +57,8 @@ export function ResumeEditor() {
         </Collapsible>
       </div>
 
-      <div className="lg:sticky lg:top-6 lg:self-start">
-        <div className="no-print mb-3 flex items-center justify-between gap-2">
+      <div className="min-h-0 overflow-y-auto scrollbar-hide">
+        {/* <div className="no-print mb-3 flex items-center justify-between gap-2">
           <div className="flex gap-2">
             <button
               type="button"
@@ -80,7 +80,7 @@ export function ResumeEditor() {
             </button>
           </div>
           <SaveStatus />
-        </div>
+        </div> */}
         <Collapsible title="Customize template" className="no-print">
           <div className="flex flex-col gap-4">
             <VariantSwitcher />
@@ -103,6 +103,29 @@ export function ResumeEditor() {
               </option>
             ))}
           </select>
+        </div>
+        <div className="no-print mb-3 flex items-center justify-between gap-2">
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={undo}
+              disabled={!canUndo}
+              className="rounded-md border border-zinc-300 px-3 py-1.5 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-100 disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+              aria-label="Undo"
+            >
+              Undo
+            </button>
+            <button
+              type="button"
+              onClick={redo}
+              disabled={!canRedo}
+              className="rounded-md border border-zinc-300 px-3 py-1.5 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-100 disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+              aria-label="Redo"
+            >
+              Redo
+            </button>
+          </div>
+          <SaveStatus />
         </div>
         <div className="no-print mb-2 flex items-center justify-end gap-1 text-sm">
           <button

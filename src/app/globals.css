@@ -38,6 +38,17 @@ body {
   line-height: calc(1.4 * var(--resume-spacing, 1));
 }
 
+/* Hidden scrollbar but scrolling still works (cross-browser). */
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
 .resume-document .resume-header {
   border-bottom: 2pt solid var(--resume-accent, #1f2937);
   margin-bottom: calc(12pt * var(--resume-spacing, 1));
