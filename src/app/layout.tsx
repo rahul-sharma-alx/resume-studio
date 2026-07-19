@@ -117,7 +117,7 @@ export default function RootLayout({
               <ThemeToggle />
             </div>
           </header>
-          <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6">{children}</main>
+          <main className="mx-auto w-full max-w-8xl flex-1 px-4 py-6">{children}</main>
         </div>
       </body>
     </html>

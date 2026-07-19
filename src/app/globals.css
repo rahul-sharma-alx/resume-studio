@@ -132,6 +132,7 @@ body {
 }
 
 .resume-document .resume-bullets {
+  list-style: disc outside;
   margin: 2pt 0 0;
   padding-left: 16pt;
 }

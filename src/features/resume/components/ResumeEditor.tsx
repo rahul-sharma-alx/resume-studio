@@ -13,6 +13,7 @@ import { EducationForm } from "@/features/resume/components/EducationForm";
 import { ExtrasForm } from "@/features/resume/components/ExtrasForm";
 import { LinksForm } from "@/features/resume/components/LinksForm";
 import { ResumeIO } from "@/features/resume/components/ResumeIO";
+import { Collapsible } from "@/features/resume/components/Collapsible";
 import { VariantSwitcher } from "@/features/resume/components/VariantSwitcher";
 import { TemplateCustomizer } from "@/features/resume/components/TemplateCustomizer";
 import { ATSPanel } from "@/features/ats/ATSPanel";
@@ -40,16 +41,20 @@ export function ResumeEditor() {
 
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-      <div className="no-print flex flex-col gap-6">
-        <ProfileForm />
-        <SummaryForm />
-        <ExperienceForm />
-        <ProjectsForm />
-        <SkillsForm />
-        <EducationForm />
-        <ExtrasForm />
-        <LinksForm />
-        <ATSPanel />
+      <div className="no-print flex flex-col gap-4">
+        <Collapsible title="Resume">
+          <div className="flex flex-col gap-6">
+            <ProfileForm />
+            <SummaryForm />
+            <ExperienceForm />
+            <ProjectsForm />
+            <SkillsForm />
+            <EducationForm />
+            <ExtrasForm />
+            <LinksForm />
+            <ATSPanel />
+          </div>
+        </Collapsible>
       </div>
 
       <div className="lg:sticky lg:top-6 lg:self-start">
@@ -76,10 +81,12 @@ export function ResumeEditor() {
           </div>
           <SaveStatus />
         </div>
-        <div className="no-print">
-          <VariantSwitcher />
-          <TemplateCustomizer />
-        </div>
+        <Collapsible title="Customize template">
+          <div className="flex flex-col gap-4">
+            <VariantSwitcher />
+            <TemplateCustomizer />
+          </div>
+        </Collapsible>
         <div className="no-print mb-3 mt-4 flex items-center justify-between">
           <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300" htmlFor="template">
             Template
