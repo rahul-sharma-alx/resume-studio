@@ -66,7 +66,7 @@ export function TemplateCustomizer() {
           onChange={(e) => style({ fontSize: Number(e.target.value) })}
           className="rounded border border-zinc-300 bg-white px-2 py-1 text-sm dark:border-zinc-700 dark:bg-zinc-900"
         >
-          {[10, 11, 12].map((s) => (
+          {[8, 9, 10, 11, 12].map((s) => (
             <option key={s} value={s}>
               {s}pt
             </option>

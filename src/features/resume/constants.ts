@@ -47,7 +47,7 @@ export const FONT_OPTIONS: Array<{ id: Variant["font"]; label: string; stack: st
   { id: "mono", label: "Mono", stack: "ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace" },
 ];
 
-export const SPACING_SCALE = { compact: 0.85, normal: 1, relaxed: 1.2 } as const;
+export const SPACING_SCALE = { compact: 0.83, normal: 1, relaxed: 1.2 } as const;
 
 export function defaultVariant(name: string, template: TemplateId = "minimal"): Variant {
   return {
