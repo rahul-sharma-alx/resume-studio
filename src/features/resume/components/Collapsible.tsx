@@ -5,17 +5,19 @@ import { useId, useState, type ReactNode } from "react";
 export function Collapsible({
   title,
   defaultOpen = true,
+  className = "",
   children,
 }: {
   title: string;
   defaultOpen?: boolean;
+  className?: string;
   children: ReactNode;
 }) {
   const [open, setOpen] = useState(defaultOpen);
   const panelId = useId();
 
   return (
-    <section className="overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800">
+    <section className={`overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800 ${className}`}>
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}

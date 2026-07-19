@@ -81,7 +81,7 @@ export function ResumeEditor() {
           </div>
           <SaveStatus />
         </div>
-        <Collapsible title="Customize template">
+        <Collapsible title="Customize template" className="no-print">
           <div className="flex flex-col gap-4">
             <VariantSwitcher />
             <TemplateCustomizer />

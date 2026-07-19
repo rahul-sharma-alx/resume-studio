@@ -102,7 +102,7 @@ export function TemplateCustomizer() {
       <details className="text-xs">
         <summary className="cursor-pointer text-zinc-500">Sections</summary>
         <div className="mt-2 flex flex-wrap gap-2">
-          {(["summary", "experience", "projects", "skills", "education", "certificates", "achievements", "languages"] as const).map(
+          {(["summary", "experience", "projects", "skills", "education", "certificates", "achievements", "languages", "links"] as const).map(
             (s) => (
               <label key={s} className="flex items-center gap-1 capitalize">
                 <input

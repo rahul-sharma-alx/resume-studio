@@ -73,7 +73,7 @@ export function VariantSwitcher() {
         ) : null}
       </div>
 
-      <fieldset className="flex flex-col gap-1">
+      {/* <fieldset className="flex flex-col gap-1">
         <legend className="mb-1 text-sm font-medium text-zinc-700 dark:text-zinc-300">Visible sections</legend>
         <div className="flex flex-wrap gap-2">
           {SECTION_IDS.map((section) => {
@@ -86,7 +86,7 @@ export function VariantSwitcher() {
             );
           })}
         </div>
-      </fieldset>
+      </fieldset> */}
     </div>
   );
 }

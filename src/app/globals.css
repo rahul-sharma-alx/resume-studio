@@ -189,6 +189,59 @@ body {
   font-style: italic;
 }
 
+/* ---- Template: minimal ---- */
+/* Hairline separators between sections, no heading rules. */
+.resume-document[data-template="minimal"] .resume-section {
+  border-top: 0.5pt solid #e5e7eb;
+  padding-top: calc(6pt * var(--resume-spacing, 1));
+}
+.resume-document[data-template="minimal"] .resume-section:first-of-type {
+  border-top: none;
+  padding-top: 0;
+}
+.resume-document[data-template="minimal"] .resume-section h2 {
+  border-bottom: none;
+  color: #111;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+/* ---- Template: professional ---- */
+/* Section headings with a left accent bar. */
+.resume-document[data-template="professional"] .resume-section h2 {
+  border-bottom: none;
+  padding-left: 6pt;
+  border-left: 3pt solid var(--resume-accent, #1f2937);
+  line-height: 1.2;
+}
+.resume-document[data-template="professional"] .resume-entry-head {
+  align-items: baseline;
+}
+.resume-document[data-template="professional"] .resume-entry-title {
+  color: var(--resume-accent, #1f2937);
+}
+
+/* ---- Template: modern ---- */
+/* Uppercase bold accent headings, divider-separated contact. */
+.resume-document[data-template="modern"] .resume-section h2 {
+  background: var(--resume-accent, #1f2937);
+  color: #fff;
+  border-bottom: none;
+  padding: 2pt 4pt;
+  letter-spacing: 0.08em;
+}
+.resume-document[data-template="modern"] .resume-contact {
+  gap: 4pt 0;
+}
+.resume-document[data-template="modern"] .resume-contact-item + .resume-contact-item::before {
+  content: "|";
+  margin-right: 10pt;
+  color: #9ca3af;
+}
+.resume-document[data-template="modern"] .resume-entry-title {
+  color: var(--resume-accent, #1f2937);
+}
+
 /* ---------------------------------------------------------------------------
    Print: render ONLY the resume document, on a clean A4 page.
    We hide editor chrome (` .no-print`) and the outer app shell, leaving the
