@@ -31,6 +31,19 @@ Each milestone should result in a deployable application.
 > - Target deploy platform is **Vercel** (zero-config for Next.js 16).
 > - The Firebase sections below (lines ~390–434, ~832–856, ~1000) are superseded and should be ignored for this build.
 > - AI is constrained to **improve/rewrite existing text only**; it never invents facts (per `00-PRODUCT_PRINCIPLES`).
+>
+> **Features shipped beyond the original V1 spec (single-page app, no separate dashboard route):**
+> - **Multi-resume management** — header `ResumeSwitcher` (create / rename / duplicate / delete / search / sort, per-resume metadata). Docs §Resume Management.
+> - **Template customization** — accent color, font family, font size, spacing, header alignment, section show/hide, per variant. Docs §Template Customization.
+> - **Inline field validation** — non-blocking format errors (email/URLs) in `ProfileForm`.
+> - **Links section** added to the data model, renderer, and editor (docs §Links).
+> - **Employment type** field in Experience (was in schema, now in UI).
+> - **ATS "add missing keyword"** — clickable chips append JD keywords to Skills (user-approved).
+> - **Preview zoom controls** (the docs' Settings *page* was deferred in favor of in-editor zoom, per the single-page decision).
+> - **Production SEO** — `metadata`, `app/robots.ts`, `app/sitemap.ts`.
+> - **Tests** — `vitest` covering `analyzeResume`, `parseResumeText`, `profileFieldErrors`, `tokenize`.
+>
+> **Deferred (documented):** PDF/DOCX binary import (JSON + plain-text paste import shipped instead); structured Certifications/Achievements (kept as free-text lists — ATS-safe, lower ROI to restructure); separate Settings route.
 
 ---
 

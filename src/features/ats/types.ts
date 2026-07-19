@@ -15,6 +15,9 @@ export interface ATSCategoryScore {
   score: number; // 0–100
   weight: number; // relative contribution to overall score
   suggestions: string[];
+  // For the keyword category: tokens present in the JD but missing from the
+  // resume. Empty when no JD is supplied or everything matches.
+  missingKeywords?: string[];
 }
 
 export interface ATSReport {

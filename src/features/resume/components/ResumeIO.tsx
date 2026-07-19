@@ -2,12 +2,15 @@
 
 import { useRef, useState } from "react";
 import { useResumeStore } from "@/features/resume/store";
-import { downloadResumeJson, readResumeJsonFile } from "@/features/resume/io";
+import { downloadResumeJson, readResumeJsonFile, normalizeImportedResume } from "@/features/resume/io";
 import { parseResumeText } from "@/features/resume/parseResumeText";
 
 export function ResumeIO() {
   const resume = useResumeStore((s) => s.resume);
   const importResume = useResumeStore((s) => s.importResume);
+  const setTemplate = useResumeStore((s) => s.setTemplate);
+  const renameResume = useResumeStore((s) => s.renameResume);
+  const activeResumeId = useResumeStore((s) => s.activeResumeId);
   const fileInput = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [showPaste, setShowPaste] = useState(false);
@@ -17,8 +20,14 @@ export function ResumeIO() {
     setError(null);
     if (!file) return;
     try {
-      const data = await readResumeJsonFile(file);
-      if (!importResume(data)) setError("Invalid resume file. Check the format and try again.");
+      const raw = await readResumeJsonFile(file);
+      const { resume: normalized, template, title } = normalizeImportedResume(raw);
+      if (!importResume(normalized)) {
+        setError("Invalid resume file. Check the format and try again.");
+        return;
+      }
+      if (template) setTemplate(template);
+      if (title) renameResume(activeResumeId, title);
     } catch {
       setError("Could not read file. Make sure it is valid JSON.");
     } finally {

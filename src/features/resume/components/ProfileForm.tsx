@@ -2,10 +2,12 @@
 
 import { TextField, SectionCard } from "@/shared/form-fields";
 import { useResumeStore } from "@/features/resume/store";
+import { profileFieldErrors } from "@/features/resume/validators/profileErrors";
 
 export function ProfileForm() {
   const profile = useResumeStore((s) => s.resume.profile);
   const setProfile = useResumeStore((s) => s.setProfile);
+  const errors = profileFieldErrors(profile);
 
   return (
     <SectionCard title="Personal Details" collapsible>
@@ -27,6 +29,7 @@ export function ProfileForm() {
           name="email"
           type="email"
           value={profile.email}
+          error={errors.email}
           onChange={(e) => setProfile({ ...profile, email: e.target.value })}
         />
         <TextField
@@ -45,18 +48,21 @@ export function ProfileForm() {
           label="Website"
           name="website"
           value={profile.website ?? ""}
+          error={errors.website}
           onChange={(e) => setProfile({ ...profile, website: e.target.value })}
         />
         <TextField
           label="LinkedIn"
           name="linkedin"
           value={profile.linkedin ?? ""}
+          error={errors.linkedin}
           onChange={(e) => setProfile({ ...profile, linkedin: e.target.value })}
         />
         <TextField
           label="GitHub"
           name="github"
           value={profile.github ?? ""}
+          error={errors.github}
           onChange={(e) => setProfile({ ...profile, github: e.target.value })}
         />
       </div>

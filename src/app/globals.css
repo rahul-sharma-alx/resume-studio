@@ -33,55 +33,83 @@ body {
 --------------------------------------------------------------------------- */
 .resume-document {
   color: #111111;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 11pt;
-  line-height: 1.4;
+  font-family: var(--resume-font, Georgia, serif);
+  font-size: var(--resume-size, 11pt);
+  line-height: calc(1.4 * var(--resume-spacing, 1));
 }
 
 .resume-document .resume-header {
-  border-bottom: 1px solid #111111;
-  margin-bottom: 12pt;
+  border-bottom: 2pt solid var(--resume-accent, #1f2937);
+  margin-bottom: calc(12pt * var(--resume-spacing, 1));
   padding-bottom: 6pt;
 }
 
 .resume-document h1 {
-  font-size: 20pt;
+  font-size: calc(20pt * var(--resume-size, 11pt) / 11);
   font-weight: 700;
   margin: 0;
 }
 
 .resume-document .resume-title {
-  font-size: 12pt;
+  font-size: calc(12pt * var(--resume-size, 11pt) / 11);
   font-weight: 600;
   margin: 2pt 0 0;
 }
 
 .resume-document .resume-contact {
   display: flex;
-  flex-wrap: wrap;
-  gap: 4pt 12pt;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 4pt 10pt;
   list-style: none;
   margin: 6pt 0 0;
   padding: 0;
-  font-size: 9pt;
+  font-size: calc(9pt * var(--resume-size, 11pt) / 11);
+}
+
+.resume-document .resume-contact-item {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.resume-document .resume-contact-link,
+.resume-document .resume-contact-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 3pt;
+  color: inherit;
+  text-decoration: none;
+}
+
+.resume-document .resume-contact-link:hover {
+  text-decoration: underline;
+}
+
+.resume-document .resume-contact-link svg,
+.resume-document .resume-contact-text svg {
+  flex: none;
+  vertical-align: middle;
+  color: var(--resume-accent, #1f2937);
 }
 
 .resume-document .resume-section {
-  margin-top: 10pt;
+  margin-top: calc(10pt * var(--resume-spacing, 1));
 }
 
 .resume-document .resume-section h2 {
-  font-size: 12pt;
+  font-size: calc(12pt * var(--resume-size, 11pt) / 11);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  border-bottom: 1px solid #cccccc;
+  border-bottom: 1pt solid var(--resume-accent, #1f2937);
+  color: var(--resume-accent, #1f2937);
   margin: 0 0 4pt;
   padding-bottom: 2pt;
 }
 
 .resume-document .resume-entry {
-  margin-top: 6pt;
+  margin-top: calc(6pt * var(--resume-spacing, 1));
 }
 
 .resume-document .resume-entry-head {
@@ -95,7 +123,7 @@ body {
 }
 
 .resume-document .resume-entry-date {
-  font-size: 9pt;
+  font-size: calc(9pt * var(--resume-size, 11pt) / 11);
   white-space: nowrap;
 }
 
@@ -113,9 +141,10 @@ body {
 }
 
 .resume-document .resume-tech {
-  font-size: 9pt;
+  font-size: calc(9pt * var(--resume-size, 11pt) / 11);
   font-style: italic;
   margin: 2pt 0 0;
+  color: var(--resume-accent, #1f2937);
 }
 
 .resume-document .resume-skills {
@@ -136,34 +165,7 @@ body {
   padding: 0 1pt;
 }
 
-/* Professional: blue section headings with a thin rule, sans-serif body. */
-.resume-document[data-template="professional"] {
-  font-family: Arial, Helvetica, sans-serif;
-}
-.resume-document[data-template="professional"] .resume-header {
-  border-bottom: 2pt solid #1f2937;
-}
-.resume-document[data-template="professional"] .resume-section h2 {
-  color: #1f2937;
-  border-bottom: 1pt solid #1f2937;
-}
-
-/* Modern: clean sans-serif with a blue accent rule under the header. */
-.resume-document[data-template="modern"] {
-  font-family: Arial, Helvetica, sans-serif;
-}
-.resume-document[data-template="modern"] .resume-header {
-  border-bottom: 2pt solid #2563eb;
-}
-.resume-document[data-template="modern"] .resume-section h2 {
-  color: #2563eb;
-  border-bottom: none;
-}
-
-/* Executive: serif, centered name, generous spacing. Same ATS-safe layout. */
-.resume-document[data-template="executive"] {
-  font-family: Georgia, "Times New Roman", serif;
-}
+/* Per-template layout tweaks (accent is user-set via --resume-accent). */
 .resume-document[data-template="executive"] h1 {
   text-align: center;
   letter-spacing: 0.02em;
@@ -176,27 +178,10 @@ body {
   border-bottom: none;
 }
 
-/* Developer: monospace for tech lines, sans body, green accent. */
-.resume-document[data-template="developer"] {
-  font-family: Arial, Helvetica, sans-serif;
-}
-.resume-document[data-template="developer"] .resume-header {
-  border-bottom: 2pt solid #059669;
-}
 .resume-document[data-template="developer"] .resume-tech {
   font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
-  color: #059669;
-}
-.resume-document[data-template="developer"] .resume-section h2 {
-  color: #059669;
-  border-bottom: none;
 }
 
-/* Academic: serif, compact, two-space section headings for CV-style use. */
-.resume-document[data-template="academic"] {
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 10.5pt;
-}
 .resume-document[data-template="academic"] .resume-section h2 {
   text-transform: none;
   letter-spacing: 0;
@@ -204,28 +189,57 @@ body {
 }
 
 /* ---------------------------------------------------------------------------
-   Print: hide everything except the resume document.
+   Print: render ONLY the resume document, on a clean A4 page.
+   We hide editor chrome (` .no-print`) and the outer app shell, leaving the
+   resume subtree in normal flow at real size (the on-screen zoom transform is
+   neutralized). Hiding ancestors of the resume would blank it out, so we only
+   hide sibling chrome, never the resume's own ancestor chain.
 --------------------------------------------------------------------------- */
 @media print {
-  body * {
-    visibility: hidden;
-  }
-  .resume-document,
-  .resume-document * {
-    visibility: visible;
-  }
-  .resume-document {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-  }
-  .resume-document .resume-highlight {
-    background-color: transparent;
-    padding: 0;
-  }
   @page {
     size: A4;
     margin: 16mm;
+  }
+  html,
+  body {
+    background: #fff !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  /* Neutralize the in-editor zoom/scale wrapper. */
+  .resume-zoom-wrap {
+    transform: none !important;
+    width: auto !important;
+  }
+  /* Let the resume column sit at the top, full width, no chrome. */
+  main,
+  .resume-preview-frame,
+  .resume-zoom-wrap,
+  .resume-zoom-wrap > div {
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: #fff !important;
+    max-width: none !important;
+    overflow: visible !important;
+  }
+  .resume-document {
+    width: 100% !important;
+    padding: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: #fff !important;
+    color: #111 !important;
+  }
+  .resume-document .resume-highlight {
+    background-color: transparent !important;
+    padding: 0 !important;
   }
 }

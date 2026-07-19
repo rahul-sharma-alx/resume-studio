@@ -41,9 +41,9 @@ export interface AnalyzeOptions {
 export function analyzeResume(resume: Resume, options: AnalyzeOptions = {}): ATSReport {
   const categories: ATSCategoryScore[] = [];
 
-  const add = (id: ATSCategoryId, score: number, suggestions: string[]) => {
+  const add = (id: ATSCategoryId, score: number, suggestions: string[], missingKeywords?: string[]) => {
     const meta = ATS_CATEGORY_WEIGHTS[id];
-    categories.push({ id, label: meta.label, score, weight: meta.weight, suggestions });
+    categories.push({ id, label: meta.label, score, weight: meta.weight, suggestions, missingKeywords });
   };
 
   // --- Contact Information ---
@@ -138,20 +138,21 @@ export function analyzeResume(resume: Resume, options: AnalyzeOptions = {}): ATS
     .toLowerCase();
   let keywordScore = 100;
   const keywordSuggestions: string[] = [];
+  let missingKeywords: string[] = [];
   if (options.jobDescription && options.jobDescription.trim()) {
     const jdTokens = tokenize(options.jobDescription);
     const resumeTokens = new Set(tokenize(resumeText));
     const missing = jdTokens.filter((t) => t.length > 2 && !resumeTokens.has(t));
-    const uniqueMissing = [...new Set(missing)];
+    missingKeywords = [...new Set(missing)];
     keywordScore = pct(jdTokens.length - missing.length, jdTokens.length) || 0;
-    if (uniqueMissing.length > 0)
+    if (missingKeywords.length > 0)
       keywordSuggestions.push(
-        `Consider adding missing keywords: ${uniqueMissing.slice(0, 8).join(", ")}${uniqueMissing.length > 8 ? "…" : ""}`,
+        `Consider adding missing keywords: ${missingKeywords.slice(0, 8).join(", ")}${missingKeywords.length > 8 ? "…" : ""}`,
       );
   } else {
     keywordSuggestions.push("Paste a job description to get a keyword match score.");
   }
-  add("keywords", keywordScore, keywordSuggestions);
+  add("keywords", keywordScore, keywordSuggestions, missingKeywords);
 
   // --- Readability (ponytail: crude, no NLP lib — sentence-length heuristic) ---
   const sentences = resumeText

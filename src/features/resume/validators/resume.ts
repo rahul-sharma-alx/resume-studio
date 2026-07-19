@@ -30,10 +30,14 @@ const urlSchema = z
 
 const optionalString = z.string().trim().max(200).optional().default("");
 
+// ponytail: profile fields are intentionally lenient here. Required-field
+// enforcement happens at the export boundary (validateExport) and via inline
+// UI hints — never by blocking input or rejecting a freshly-created resume.
+// Empty strings are valid; only format is checked when a value is present.
 export const profileSchema = z.object({
-  fullName: z.string().trim().min(2, "Name is required").max(80),
-  jobTitle: z.string().trim().min(2, "Job title is required").max(60),
-  email: z.string().trim().email("Invalid email"),
+  fullName: z.string().trim().max(80).optional().default(""),
+  jobTitle: z.string().trim().max(60).optional().default(""),
+  email: z.string().trim().email("Invalid email").or(z.literal("")).optional().default(""),
   phone: optionalString,
   location: optionalString,
   website: urlSchema,
@@ -86,6 +90,11 @@ export const educationSchema = z.object({
   location: optionalString,
 });
 
+export const linkSchema = z.object({
+  label: z.string().trim().min(1, "Label is required"),
+  url: urlSchema,
+});
+
 export const resumeSchema = z.object({
   profile: profileSchema,
   summary: z.string().trim().max(600).optional().default(""),
@@ -98,7 +107,10 @@ export const resumeSchema = z.object({
   languages: z
     .array(z.object({ name: z.string().trim().min(1), proficiency: optionalString }))
     .default([]),
+  links: z.array(linkSchema).default([]),
 });
+
+export type Link = z.infer<typeof linkSchema>;
 
 export type EmploymentType = z.infer<typeof employmentTypeSchema>;
 export type SkillCategory = z.infer<typeof skillCategorySchema>;

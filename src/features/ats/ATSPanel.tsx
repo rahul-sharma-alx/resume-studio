@@ -37,11 +37,28 @@ export function ATSPanel() {
   const resume = useResumeStore((s) => s.resume);
   const jobDescription = useResumeStore((s) => s.jobDescription);
   const setJobDescription = useResumeStore((s) => s.setJobDescription);
+  const setSkills = useResumeStore((s) => s.setSkills);
 
   const report = useMemo(
     () => analyzeResume(resume, { jobDescription }),
     [resume, jobDescription],
   );
+
+  const addKeywordToSkills = (keyword: string) => {
+    const group = resume.skills.find((g) => g.category === "SoftSkills") ?? {
+      category: "SoftSkills" as const,
+      skills: [],
+    };
+    const skills = group.skills.map((s) => s.toLowerCase());
+    if (skills.includes(keyword.toLowerCase())) return;
+    setSkills(
+      resume.skills.some((g) => g.category === "SoftSkills")
+        ? resume.skills.map((g) =>
+            g.category === "SoftSkills" ? { ...g, skills: [...g.skills, keyword] } : g,
+          )
+        : [...resume.skills, { category: "SoftSkills", skills: [keyword] }],
+    );
+  };
 
   return (
     <section className="flex flex-col gap-4 rounded-lg border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900/50">
@@ -82,6 +99,21 @@ export function ATSPanel() {
                   <li key={i}>{s}</li>
                 ))}
               </ul>
+            ) : null}
+            {category.missingKeywords && category.missingKeywords.length > 0 ? (
+              <div className="mt-1 flex flex-wrap gap-1">
+                {category.missingKeywords.slice(0, 12).map((kw) => (
+                  <button
+                    key={kw}
+                    type="button"
+                    onClick={() => addKeywordToSkills(kw)}
+                    className="rounded-full border border-indigo-300 px-2 py-0.5 text-xs text-indigo-700 transition-colors hover:bg-indigo-50 dark:border-indigo-700 dark:text-indigo-300 dark:hover:bg-indigo-950"
+                    title="Add to Skills"
+                  >
+                    + {kw}
+                  </button>
+                ))}
+              </div>
             ) : null}
           </li>
         ))}

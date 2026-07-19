@@ -3,6 +3,7 @@
 import { TextField, TextAreaField, SectionCard } from "@/shared/form-fields";
 import { useResumeStore } from "@/features/resume/store";
 import type { Experience } from "@/features/resume/validators/resume";
+import { employmentTypeSchema } from "@/features/resume/validators/resume";
 import { StringListEditor } from "./StringListEditor";
 import { AiImproveButton } from "@/features/ai/AiImproveButton";
 
@@ -72,6 +73,20 @@ function ExperienceItem({
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <TextField label="Company" value={item.company} onChange={(e) => onChange({ company: e.target.value })} />
         <TextField label="Position" value={item.position} onChange={(e) => onChange({ position: e.target.value })} />
+        <div className="flex flex-col gap-1">
+          <label htmlFor={`emp-${item.id}`} className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Employment Type</label>
+          <select
+            id={`emp-${item.id}`}
+            value={item.employmentType ?? ""}
+            onChange={(e) => onChange({ employmentType: (e.target.value || undefined) as Experience["employmentType"] })}
+            className="rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900"
+          >
+            <option value="">—</option>
+            {employmentTypeSchema.options.map((t) => (
+              <option key={t} value={t}>{t}</option>
+            ))}
+          </select>
+        </div>
         <TextField label="Start Date" placeholder="Jan 2023" value={item.startDate} onChange={(e) => onChange({ startDate: e.target.value })} />
         <TextField
           label="End Date"

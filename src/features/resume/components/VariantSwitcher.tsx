@@ -12,6 +12,7 @@ const SECTION_LABELS: Record<SectionId, string> = {
   certificates: "Certifications",
   achievements: "Achievements",
   languages: "Languages",
+  links: "Links",
 };
 
 export function VariantSwitcher() {
